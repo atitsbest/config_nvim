@@ -2,7 +2,7 @@ return {
 	{
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v3.x',
-		lazy = false,
+		lazy = true,
 		config = false,
 		init = function()
 			-- Disable automatic setup, we are doing it manually
@@ -44,9 +44,31 @@ return {
 					local cmp_action = lsp_zero.cmp_action()
 
 					cmp.setup({
+                        -- Github Copilot integration
+                        sources = {
+                            { name = "copilot" },
+                            { name = "nvim_lsp" }
+                        },
+                        preselect = "item",
+                        completion = {
+                            completeopt = "menu,menuone,noinsert"
+                        },
+                        window = {
+                            completion = cmp.config.window.bordered()
+                        },
 						formatting = lsp_zero.cmp_format(),
 						mapping = cmp.mapping.preset.insert({
+                            -- Tab to confirm completion
+                            ['<Tab>'] = cmp.mapping.confirm({
+                                -- documentation says this is important.
+                                -- I don't know why.
+                                behavior = cmp.ConfirmBehavior.Replace,
+                                select = false,
+                            }),
+
+                            -- Ctrl+Space to triger completion menu
 							['<C-Space>'] = cmp.mapping.complete(),
+
 							['<C-u>'] = cmp.mapping.scroll_docs(-4),
 							['<C-d>'] = cmp.mapping.scroll_docs(4),
 							['<C-f>'] = cmp_action.luasnip_jump_forward(),
